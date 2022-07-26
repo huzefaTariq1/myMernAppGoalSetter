@@ -1,4 +1,5 @@
 const Joi = require("joi")
+const MyGoals=require("../models/mygoalmodels")
 
 
 const getGoals = (req, res) => {
@@ -6,7 +7,7 @@ const getGoals = (req, res) => {
 }
 
 
-const postGoal = (req, res) => {
+const postGoal = async(req, res) => {
 
     const joiSchema = {
         name: Joi.string().min(3).required()
@@ -19,8 +20,12 @@ const postGoal = (req, res) => {
         //400 bad request
         res.status(400).send(result.error.details[0].message)
     }
-
-    res.send("posting goals")
+     
+   const goal= await new MyGoals({
+        name:req.body.name
+    })
+   const dbResult=await goal.save()
+    res.send(dbResult)
 }
 
 const putGoal = (req, res) => {
